@@ -5,7 +5,6 @@ from geometry_msgs.msg import Pose
 from sensor_msgs.msg import Image, CameraInfo
 import cv2 as cv
 import pyrealsense2 as rs
-from cv_bridge import CvBridge
 import numpy as np
 from ultralytics import YOLO
 from ultralytics.yolo.v8.detect.predict import DetectionPredictor
@@ -13,9 +12,9 @@ from ultralytics.yolo.v8.detect.predict import DetectionPredictor
 model = YOLO('/home/adeel/catkin_ws/src/mango_detection/src/scripts/Fruit_Plucking_Project/models/Trees_v8_03.pt')
 
 def detect_tree(color_frame):
-    cw = color_frame.shape[1] / 2
-    ch = color_frame.shape[0] / 2
-    coord = [cw, ch]
+    # cw = color_frame.shape[1] / 2
+    # ch = color_frame.shape[0] / 2
+    coord = [0,0]
     results = model.predict(color_frame, show=False)
     for result in results:
         boxes = result.boxes
@@ -23,15 +22,15 @@ def detect_tree(color_frame):
         boxez = boxez.cpu().numpy()
         for box in boxez:
             x, y, w, h = box
-            coord = [x,y]
-            return coord    
+            if x is not None: 
+                coord = [int(x),int(y)]
+    return coord    
 
 def main():
     rospy.init_node('marker_pose_node')
     pub = rospy.Publisher('/vector', Float64MultiArray, queue_size=10)
     rospy.loginfo('the node is working')
     rate = rospy.Rate(30)
-    bridge = CvBridge()
     pipeline = rs.pipeline()
     config = rs.config()
     config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
