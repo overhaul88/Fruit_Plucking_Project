@@ -9,7 +9,7 @@ import numpy as np
 from ultralytics import YOLO
 from ultralytics.yolo.v8.detect.predict import DetectionPredictor
 
-model = YOLO('/home/adeel/catkin_ws/src/mango_detection/src/scripts/Fruit_Plucking_Project/models/Trees_v8_03.pt')
+model = YOLO('models/Trees_v8_03.pt')
 
 def detect_tree(color_frame):
     # cw = color_frame.shape[1] / 2
